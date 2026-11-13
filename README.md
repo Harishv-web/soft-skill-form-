@@ -29,13 +29,14 @@ firestore.rules          Server-enforced access and data validation
 scripts/set-admin.mjs    Trusted local utility to grant an admin claim
 tests/validation.test.js Client validation tests
 firebase.json            Hosting and rules deployment configuration
+.firebaserc              Pins the Firebase project used by deployment
 ```
 
 ## 1. Create and configure Firebase
 
 1. Create a Firebase project in the [Firebase Console](https://console.firebase.google.com/).
 2. In **Project settings → Your apps**, add a **Web app**. Copy its configuration values into `public/firebase-config.js`.
-3. In **Build → Authentication → Sign-in method**, enable **Google**. Set a support email when prompted.
+3. In **Build → Authentication**, select **Get started**, then open **Sign-in method → Google**, enable it, choose a project support email, and save.
 4. In **Authentication → Settings → Authorized domains**, add your Firebase Hosting domain and any custom domain you use. `localhost` is included for local testing.
 5. In **Build → Firestore Database**, create a Firestore database. Choose the production location carefully; it cannot be changed later.
 
@@ -79,17 +80,18 @@ To remove access, use a trusted Admin SDK script/Cloud Function to set that user
 
 ## 4. Deploy to Firebase Hosting
 
-Install prerequisites: Node.js 20+ and the Firebase CLI.
+Install prerequisites: Node.js 20+ and the Firebase CLI. The checked-in
+`.firebaserc` already selects the `soft-skills-lab-feedback` project and
+`firebase.json` targets its default Hosting site.
 
 ```powershell
 npm install
 npm install --global firebase-tools
 firebase login
-firebase use --add
-firebase deploy --only firestore:rules,hosting
+firebase deploy --only firestore:rules,hosting --project soft-skills-lab-feedback
 ```
 
-Alternatively, run `npx firebase-tools login`, `npx firebase-tools use --add`, and `npx firebase-tools deploy --only firestore:rules,hosting` without a global install.
+Alternatively, run `npx firebase-tools login` and `npx firebase-tools deploy --only firestore:rules,hosting --project soft-skills-lab-feedback` without a global install.
 
 Before deployment, confirm `public/firebase-config.js` contains the correct values and that Google Auth’s authorized domains include the final Hosting URL. Firebase will print the Hosting URL after a successful deployment. This project deliberately does not claim that deployment is complete until you run that command in your Firebase account.
 
@@ -115,11 +117,12 @@ Then test against your own Firebase project:
 - [ ] A custom-claim administrator can view counts, search, filter/sort marks, see times, and export CSV.
 - [ ] Check the form and dashboard on a phone, tablet, and desktop.
 
-## Remaining manual steps
+## Current handoff status
 
-1. Enter Firebase Web App values in `public/firebase-config.js`.
-2. Enable Google sign-in and add authorized domains.
-3. Create Firestore, deploy the supplied rules, and grant the intended account the `admin` custom claim from a trusted environment.
-4. Run the checklist above using your Firebase project, then deploy Hosting.
+- The Firebase web-app configuration is already in `public/firebase-config.js`.
+- A default Cloud Firestore database exists in `soft-skills-lab-feedback`.
+- Firebase Authentication has not been initialized yet: its console still shows **Get started**. Enable the Google provider as described above.
+- The code and deployment configuration are on the `main` branch of the configured GitHub remote.
+- Hosting is not live yet. Its expected URL, `https://soft-skills-lab-feedback.web.app/`, currently returns 404 until the deployment command completes.
 
-No Firebase credentials were invented or embedded, and no deployment was performed.
+Do not embed service-account JSON files, browser tokens, or private keys in this repository.
