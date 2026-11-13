@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#07111f" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Soft Skills Lab | Administrator</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-one" aria-hidden="true"></div>
+    <div class="ambient ambient-two" aria-hidden="true"></div>
+    <main class="site-shell dashboard-shell">
+      <header class="brand-bar">
+        <a class="brand" href="/admin.html" aria-label="Soft Skills Lab administrator dashboard">
+          <span class="brand-mark" aria-hidden="true">S</span>
+          <span>Soft Skills Lab <em>Admin</em></span>
+        </a>
+        <div id="profile-slot" class="profile-slot" hidden></div>
+      </header>
+
+      <section class="admin-hero" aria-labelledby="admin-page-title">
+        <p class="eyebrow">Restricted area</p>
+        <h1 id="admin-page-title">Submission dashboard</h1>
+        <p>Private access for authorised course administrators.</p>
+      </section>
+
+      <section id="screen-loading" class="screen-card state-card" aria-live="polite">
+        <span class="spinner" aria-hidden="true"></span>
+        <h2>Verifying access</h2>
+        <p>Please wait a moment.</p>
+      </section>
+
+      <section id="screen-sign-in" class="screen-card state-card" hidden aria-labelledby="admin-sign-in-title">
+        <div class="icon-orb" aria-hidden="true">↗</div>
+        <h2 id="admin-sign-in-title">Administrator sign-in</h2>
+        <p>Sign in with the Google account that has been granted the administrator role.</p>
+        <button id="google-sign-in" class="button button-primary button-wide" type="button">
+          <span class="google-g" aria-hidden="true">G</span>
+          Sign in as administrator
+        </button>
+        <p class="fine-print">Dashboard access is enforced by Firebase custom claims and Firestore Security Rules.</p>
+      </section>
+
+      <section id="screen-unauthorised" class="screen-card state-card" hidden aria-labelledby="unauthorised-title">
+        <div class="error-mark" aria-hidden="true">!</div>
+        <p class="eyebrow">Access denied</p>
+        <h2 id="unauthorised-title">This account is not an administrator.</h2>
+        <p>Student accounts cannot view submissions, counts, or exports.</p>
+        <button id="unauthorised-sign-out" class="button button-secondary" type="button">Sign out</button>
+      </section>
+
+      <section id="screen-error" class="screen-card state-card" hidden aria-labelledby="error-title">
+        <div class="error-mark" aria-hidden="true">!</div>
+        <h2 id="error-title">Dashboard unavailable</h2>
+        <p id="error-detail">Please try again.</p>
+        <div class="button-row">
+          <button id="retry-button" class="button button-primary" type="button">Try again</button>
+          <button id="error-sign-out" class="button button-secondary" type="button" hidden>Sign out</button>
+        </div>
+      </section>
+
+      <section id="screen-dashboard" hidden aria-label="Submission dashboard">
+        <div class="dashboard-summary">
+          <article class="metric-card">
+            <span>Total submissions</span>
+            <strong id="total-count">0</strong>
+            <small>All recorded responses</small>
+          </article>
+          <article class="metric-card metric-card-wide">
+            <span>Dashboard access</span>
+            <strong>Administrator verified</strong>
+            <small>Read-only student records · no changes can be made here</small>
+          </article>
+          <button id="sign-out" class="button button-secondary dashboard-sign-out" type="button">Sign out</button>
+        </div>
+
+        <section class="dashboard-card controls-card" aria-label="Response controls">
+          <div class="controls-heading">
+            <div>
+              <p class="eyebrow">Responses</p>
+              <h2>Student submissions</h2>
+            </div>
+            <button id="export-button" class="button button-primary" type="button">Export CSV</button>
+          </div>
+          <div class="controls-grid">
+            <label>
+              <span>Search roll number or name</span>
+              <input id="search-input" type="search" placeholder="Search responses" autocomplete="off" />
+            </label>
+            <label>
+              <span>Marks filter</span>
+              <select id="marks-filter">
+                <option value="all">All marks</option>
+                <option value="1-20">1–20</option>
+                <option value="21-35">21–35</option>
+                <option value="36-50">36–50</option>
+              </select>
+            </label>
+            <label>
+              <span>Sort by</span>
+              <select id="sort-select">
+                <option value="submitted-desc">Newest submission</option>
+                <option value="submitted-asc">Oldest submission</option>
+                <option value="marks-desc">Marks: high to low</option>
+                <option value="marks-asc">Marks: low to high</option>
+                <option value="name-asc">Student name: A–Z</option>
+              </select>
+            </label>
+          </div>
+          <p id="shown-count" class="table-note" aria-live="polite"></p>
+        </section>
+
+        <section class="dashboard-card table-card">
+          <div class="table-wrap" tabindex="0">
+            <table>
+              <caption class="visually-hidden">Soft Skills Lab student submissions</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Roll number</th>
+                  <th scope="col">Student</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Marks</th>
+                  <th scope="col">Feedback</th>
+                  <th scope="col">Submitted at</th>
+                </tr>
+              </thead>
+              <tbody id="submissions-body"></tbody>
+            </table>
+          </div>
+          <p id="empty-state" class="empty-state" hidden>No submissions match the current filters.</p>
+        </section>
+      </section>
+    </main>
+    <script type="module" src="/admin.js"></script>
+  </body>
+</html>

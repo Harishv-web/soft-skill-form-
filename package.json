@@ -1,0 +1,14 @@
+{
+  "name": "soft-skills-lab-feedback",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check public/firebase-config.js && node --check public/firebase-client.js && node --check public/validation.js && node --check public/student.js && node --check public/admin.js && node --check scripts/set-admin.mjs",
+    "set-admin": "node scripts/set-admin.mjs"
+  },
+  "devDependencies": {
+    "firebase-admin": "^13.0.0"
+  }
+}

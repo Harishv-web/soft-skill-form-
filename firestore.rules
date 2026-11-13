@@ -1,0 +1,74 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function hasVerifiedGoogleEmail() {
+      return request.auth != null
+        && request.auth.token.email != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.firebase.sign_in_provider == 'google.com';
+    }
+
+    // The admin claim can only be issued with the Firebase Admin SDK from a
+    // trusted environment. A browser must never be able to set this claim.
+    function isAdmin() {
+      return hasVerifiedGoogleEmail() && request.auth.token.admin == true;
+    }
+
+    function isOwner(userId) {
+      return hasVerifiedGoogleEmail() && request.auth.uid == userId;
+    }
+
+    function hasOnlySubmissionFields() {
+      return request.resource.data.keys().hasAll([
+          'email', 'rollNumber', 'name', 'marks', 'feedback', 'submittedAt'
+        ])
+        && request.resource.data.keys().hasOnly([
+          'email', 'rollNumber', 'name', 'marks', 'feedback', 'submittedAt'
+        ]);
+    }
+
+    function isValidSubmission() {
+      return hasOnlySubmissionFields()
+        && request.resource.data.email is string
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.rollNumber is string
+        && request.resource.data.rollNumber.matches('^[0-9]{10}$')
+        && request.resource.data.name is string
+        && request.resource.data.name.size() >= 2
+        && request.resource.data.name.size() <= 100
+        // Require a Unicode letter, so numeric-only/punctuation-only names are
+        // rejected without limiting students to Latin-script names.
+        && request.resource.data.name.matches('.*\\p{L}.*')
+        && request.resource.data.marks is int
+        && request.resource.data.marks >= 1
+        && request.resource.data.marks <= 50
+        && request.resource.data.feedback is string
+        && request.resource.data.feedback.size() >= 1
+        && request.resource.data.feedback.size() <= 3000
+        && !request.resource.data.feedback.matches('^\\s*$')
+        // serverTimestamp() resolves to request.time before rules are evaluated.
+        && request.resource.data.submittedAt == request.time;
+    }
+
+    match /submissions/{userId} {
+      // A student may read only their own document, solely to determine whether
+      // they already submitted. Administrators can read individual records.
+      allow get: if isOwner(userId) || isAdmin();
+      // Collection reads are dashboard-only; students can never list entries.
+      allow list: if isAdmin();
+
+      // `create` (rather than `write`) and a UID document ID make each account
+      // permanently limited to one submission. Updates and deletes are denied.
+      allow create: if isOwner(userId)
+        && !exists(/databases/$(database)/documents/submissions/$(userId))
+        && isValidSubmission();
+      allow update, delete: if false;
+    }
+
+    // No other client-accessible data is defined by this project.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
