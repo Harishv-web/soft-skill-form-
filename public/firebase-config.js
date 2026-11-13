@@ -7,12 +7,12 @@
  * account JSON file, Admin SDK private key, or other server secret here.
  */
 export const firebaseConfig = Object.freeze({
-  apiKey: '',
-  authDomain: '',
-  projectId: '',
-  storageBucket: '',
-  messagingSenderId: '',
-  appId: ''
+  apiKey: 'AIzaSyChmoJZeVzJzAAOXOVbm23aoCy-xnh5xSQ',
+  authDomain: 'soft-skills-lab-feedback.firebaseapp.com',
+  projectId: 'soft-skills-lab-feedback',
+  storageBucket: 'soft-skills-lab-feedback.firebasestorage.app',
+  messagingSenderId: '220814705433',
+  appId: '1:220814705433:web:7fbf68243dc39995dbfb88'
 });
 
 export function isFirebaseConfigured(config = firebaseConfig) {
