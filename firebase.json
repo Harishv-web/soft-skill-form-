@@ -3,6 +3,7 @@
     "rules": "firestore.rules"
   },
   "hosting": {
+    "site": "soft-skills-lab-feedback",
     "public": "public",
     "ignore": [
       "firebase.json",
